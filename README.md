@@ -11,6 +11,9 @@ p2p-poker/
 │       └── main.go
 ├── internal/
 │   ├── cli/                   # Command-line interface handling
+│   │   ├── commands/
+│   │   │   └── peers.go
+│   │   ├── command_router.go
 │   │   └── cli.go
 │   ├── config/                # Config parsing (env vars, flags, etc)
 │   │   └── config.go

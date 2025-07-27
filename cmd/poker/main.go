@@ -5,14 +5,19 @@ import (
 	"p2p-poker/internal/p2p"
 )
 
-func main() {
-	config := p2p.InitPeerFromCLI()
-	peer := p2p.NewPeer(config)
+var (
+	n = p2p.Network{}
+)
 
-	go peer.StartServer()
+func main() {
+	config := n.InitPeerFromCLI()
+	peer := p2p.NewPeer(config)
+	network := p2p.Network{}
+
+	go network.StartServer(peer.Addr)
 
 	if peer.ShouldConnect {
-		peer.ConnectTo(peer.RemoteAddr)
+		network.ConnectTo(peer.RemoteAddr)
 	}
 
 	cli.Run(peer)
