@@ -1,3 +1,3 @@
-module p2p-poker
+module p2poker
 
 go 1.23.5
