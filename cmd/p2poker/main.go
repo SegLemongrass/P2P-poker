@@ -91,6 +91,17 @@ func repl(ctx context.Context, n *cluster.Node) {
 			} else {
 				fmt.Println("created:", id)
 			}
+		case "tables":
+			ids := n.Manager().ListIDs()
+			if len(ids) == 0 {
+				fmt.Println("no tables locally; use 'create' or 'discover <id>'")
+			} else {
+				fmt.Println("local tables:")
+				for _, id := range ids {
+					fmt.Println(" -", id)
+				}
+				fmt.Println("use 'snapshot <id>' or 'epoch <id>' to inspect")
+			}
 		case "discover":
 			// discover <tableID>
 			if len(args) < 2 {
@@ -219,6 +230,7 @@ func printHelp() {
 	fmt.Println(`commands:
   whoami
   create <name> [sb bb min]
+	tables
   discover <tableID>
   attach <tableID> <name> <sb> <bb> <min> <epoch>
   join <tableID>

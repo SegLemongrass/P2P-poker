@@ -2,6 +2,7 @@ package cluster
 
 import (
 	"errors"
+	"sort"
 	"sync"
 
 	"p2poker/internal/protocol"
@@ -56,4 +57,16 @@ func (m *TableManager) Get(id protocol.TableID) (*table.Table, bool) {
 	t, ok := m.tables[id]
 	m.mu.RUnlock()
 	return t, ok
+}
+
+// ListIDs returns a sorted list of table IDs known locally.
+func (m *TableManager) ListIDs() []protocol.TableID {
+	m.mu.RLock()
+	defer m.mu.RUnlock()
+	ids := make([]protocol.TableID, 0, len(m.tables))
+	for id := range m.tables {
+		ids = append(ids, id)
+	}
+	sort.Slice(ids, func(i, j int) bool { return ids[i] < ids[j] })
+	return ids
 }
