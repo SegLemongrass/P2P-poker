@@ -1,6 +1,7 @@
 PEER=7777
 PORT=7777
 
+
 #builds and run app
 run:
 	@go run ./cmd/p2poker -listen :${PORT}
