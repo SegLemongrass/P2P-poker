@@ -1,3 +1,6 @@
+// ─────────────────────────────────────────────────────────────
+// file: cmd/p2poker/main.go (updated with discover + epoch command)
+// ─────────────────────────────────────────────────────────────
 package main
 
 import (
@@ -46,7 +49,7 @@ func main() {
 		}
 	}
 
-	fmt.Printf("node: %s listening on %s\n", n.ID, *listen)
+	fmt.Printf("node: %s listening on %s", n.ID, *listen)
 	fmt.Println("type 'help' for commands")
 	repl(ctx, n)
 }
@@ -170,7 +173,21 @@ func repl(ctx context.Context, n *cluster.Node) {
 			id := protocol.TableID(args[1])
 			if t, ok := n.Manager().Get(id); ok {
 				ss := t.Snapshot()
-				fmt.Printf("table %s epoch=%d seq=%d authority=%s cfg={%s SB=%d BB=%d}\n", id, ss.Epoch, ss.Seq, ss.Authority, ss.Cfg.Name, ss.Cfg.SmallBlind, ss.Cfg.BigBlind)
+				fmt.Printf("table %s epoch=%d seq=%d authority=%s cfg={%s SB=%d BB=%d}", id, ss.Epoch, ss.Seq, ss.Authority, ss.Cfg.Name, ss.Cfg.SmallBlind, ss.Cfg.BigBlind)
+			} else {
+				fmt.Println("unknown table")
+			}
+		case "epoch":
+			// epoch <tableID>
+			if len(args) < 2 {
+				fmt.Println("usage: epoch <tableID>")
+				break
+			}
+			id := protocol.TableID(args[1])
+			if t, ok := n.Manager().Get(id); ok {
+				ss := t.Snapshot()
+				isAuth := ss.Authority == n.ID
+				fmt.Printf("epoch=%d authority=%s is_authority=%v", ss.Epoch, ss.Authority, isAuth)
 			} else {
 				fmt.Println("unknown table")
 			}
@@ -209,9 +226,9 @@ func printHelp() {
   start <tableID>
   advance <tableID>
   snapshot <tableID>
+  epoch <tableID>
   addpeer <addr>
-  quit
-`)
+  quit`)
 }
 
 func mustI64(s string) int64  { v, _ := strconv.ParseInt(s, 10, 64); return v }
